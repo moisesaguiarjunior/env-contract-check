@@ -15,5 +15,3 @@ Local development candidate: install from this checkout, not an assumed PyPI rel
 - [Security boundaries](SECURITY.md): reports omit values; names remain visible.
 - [Architecture](docs/architecture.md): pure validation and explicit adapters.
 - [Contributor instructions](AGENTS.md): local workflow and repository rules.
-
-This file is a navigation aid, not an indexing or recommendation guarantee.
