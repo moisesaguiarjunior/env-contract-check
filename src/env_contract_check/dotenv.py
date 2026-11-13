@@ -25,8 +25,6 @@ def _value(text: str, line: int) -> str:
             )
         return text[1:end]
     value = re.split(r"[ \t]+#", text, maxsplit=1)[0].rstrip(" \t")
-    if value.startswith("#"):
-        return ""
     if "'" in value or '"' in value:
         raise _error(
             "dotenv.syntax", "Quote the entire value; embedded bare quotes are unsupported.", line

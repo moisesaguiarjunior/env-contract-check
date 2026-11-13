@@ -39,7 +39,7 @@ def _check_value(rule: Rule, value: str) -> Issue | None:
                 return issue("value.choice", "Use one of the choices in the contract.")
         case Kind.INTEGER:
             if not _INTEGER.fullmatch(value) or len(value.lstrip("+-")) > 640:
-                return issue("value.integer", "Expected a decimal integer of at most 640 digits.")
+                return issue("value.integer", "Expected a decimal integer.")
             number = int(value)
             if (rule.minimum is not None and number < rule.minimum) or (
                 rule.maximum is not None and number > rule.maximum

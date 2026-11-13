@@ -7,7 +7,6 @@ Local development candidate: install from this checkout, not an assumed PyPI rel
 ## Documentation
 
 - [GitHub Action](docs/github-action.md): validate generated .env files before tag-triggered deployments.
-
 - [Overview and quick start](README.md): installation and runnable examples.
 - [Contract reference](docs/contract.md): types, fields, literal dotenv grammar.
 - [CLI protocol](docs/cli.md): flags, exit codes 0/1/2, stable diagnostic codes.

@@ -5,10 +5,11 @@ build-backend = "hatchling.build"
 [project]
 name = "env-contract-check"
 version = "0.1.0"
-description = "Validate .env files and environment variables against explicit contracts. Catch missing configuration and example drift with value-free CI reports."
+description = "Validate .env files against a typed schema and check .env.example drift. Catch missing configuration and example drift with value-free CI reports."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [{name = "Moises Aguiar Junior"}]
 keywords = ["dotenv", "environment-variables", "configuration-validation", "cli", "ci", "contract", "developer-tools", "github-actions", "deployment-validation"]
 classifiers = [
@@ -16,6 +17,10 @@ classifiers = [
   "Environment :: Console",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Quality Assurance",
   "Typing :: Typed",
 ]
@@ -67,4 +72,4 @@ fail_under = 90
 packages = ["src/env_contract_check"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src", "/tests", "/tools", "/examples", "/docs", "/README.md", "/LICENSE", "/pyproject.toml", "/uv.lock", "/CONTRIBUTING.md", "/SECURITY.md", "/AGENTS.md", "/llms.txt", "/action.yml"]
+include = ["/src", "/tests", "/tools", "/examples", "/docs", "/README.md", "/LICENSE", "/pyproject.toml", "/uv.lock", "/CONTRIBUTING.md", "/SECURITY.md", "/AGENTS.md", "/llms.txt", "/action.yml", "/CHANGELOG.md"]

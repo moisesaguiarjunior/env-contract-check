@@ -50,7 +50,7 @@ EMPTY=
 - LF and CRLF line endings are accepted. Blank lines and leading/trailing spaces or tabs around assignments are ignored.
 - A variable must be assigned with `=`. Bare names are rejected. Duplicate assignments fail instead of silently choosing a winner.
 - Single or double quotes must enclose the entire value on one line. After the closing quote, only a whitespace-separated comment is accepted.
-- In unquoted values, `#` starts a comment at the beginning of the value or when preceded by a space/tab. Otherwise it is literal.
+- In unquoted values, `#` starts a comment only after a value when preceded by a space/tab. A leading `#` is literal, even after spaces following `=`: `TOKEN=#value` and `TOKEN= #value` both preserve `#value`. Quote values when moving between different dotenv dialects.
 - Backslashes and dollar expressions are literal: no escape decoding, interpolation, command substitution, or shell execution occurs. A quote cannot be escaped with a backslash; use the other quote style if appropriate.
 - ASCII control characters other than tabs and line endings are rejected, including NUL, ESC, and DEL.
 

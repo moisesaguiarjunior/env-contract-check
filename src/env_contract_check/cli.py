@@ -119,7 +119,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     except InputError as error:
         report = Report("error", 0, (error.issue,))
     try:
-        print(render(report, json_output=_wants_json(args)))
+        print(render(report, json_output=_wants_json(args)), flush=True)
     except BrokenPipeError:
+        # Prevent a second failed flush during interpreter shutdown.
+        with open(os.devnull, "w", encoding="utf-8") as sink:
+            os.dup2(sink.fileno(), sys.stdout.fileno())
         return 2
     return report.exit_code

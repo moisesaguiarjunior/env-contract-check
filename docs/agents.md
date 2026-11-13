@@ -50,6 +50,6 @@ Use the [composite Action](github-action.md) between environment generation and 
 - [CLI](cli.md): commands, exit codes, diagnostics.
 - [JSON Schema](output.schema.json): machine-readable output shape.
 - [Architecture](architecture.md): implementation boundaries.
-- [Reuse map](reuso.md): canonical code owners.
+- [Reuse map](reuse.md): canonical code owners.
 
 Package and command: `env-contract-check`. Python import: `env_contract_check`. Development candidate only; no public package/repository availability is implied.

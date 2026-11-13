@@ -4,7 +4,7 @@
 
 ### Catch configuration mistakes before your application starts.
 
-**Validate `.env` files and environment variables against a typed contract.**
+**Validate `.env` files against a typed schema — your environment contract.**
 Find missing variables, invalid values, and stale `.env.example` files — with reports that omit values.
 
 **Python 3.11+ · Zero runtime dependencies · Offline · CI-ready JSON · GitHub Action**
@@ -13,16 +13,27 @@ Find missing variables, invalid values, and stale `.env.example` files — with 
 
 </div>
 
+Input: [`examples/invalid.env`](examples/invalid.env), using synthetic values:
+
+```dotenv
+API_URL=not-a-url
+APP_MODE=production
+DEBUG=perhaps
+PORT=eighty
+```
+
+The report identifies the failing names and rules without repeating these values:
+
 ```text
 $ env-contract-check --contract examples/env.contract.toml --env-file examples/invalid.env
 
 INVALID: 3 issue(s).
   [value.url] API_URL: Expected an absolute URL with a host and valid port.
   [value.boolean] DEBUG: Expected true, false, 1, or 0 (case-insensitive).
-  [value.integer] PORT: Expected a decimal integer of at most 640 digits.
+  [value.integer] PORT: Expected a decimal integer.
 ```
 
-**Status:** local development candidate, version `0.1.0`. Not published to PyPI. The commands below install or run this checkout. CI is defined, but no hosted CI result or independent review is claimed.
+**Status:** local development candidate, version `0.1.0`. Not published to PyPI. Install or run this checkout using the local commands below.
 
 ## Why an environment contract?
 
@@ -112,49 +123,16 @@ Tag v1.2.3 -> generate .env -> validate contract -> deploy
 The reusable composite Action is implemented in [action.yml](action.yml). It forwards inputs to the same CLI in an isolated Python environment. **It is still local:** the consumer template below becomes usable after publication. Replace `REVIEWED_COMMIT_SHA` with the reviewed public commit and replace the deploy command with your own script.
 
 ```yaml
-# Consumer template: replace REVIEWED_COMMIT_SHA and the deploy command before use.
-# This file is documentation; it is not an active workflow in this repository.
-name: Validate environment and deploy
-
-on:
-  push:
-    tags: ['v*']
-
-permissions:
-  contents: read
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          persist-credentials: false
-      - name: Write generated environment
-        shell: python
-        env:
-          DEPLOY_ENV_CONTENT: ${{ secrets.DEPLOY_ENV }}
-        run: |
-          import os
-          from pathlib import Path
-          Path('.env.deploy').write_text(os.environ['DEPLOY_ENV_CONTENT'], encoding='utf-8')
-      - name: Validate before deployment
-        uses: moisesaguiarjunior/env-contract-check@REVIEWED_COMMIT_SHA
-        with:
-          contract: env.contract.toml
-          env-file: .env.deploy
-          example-file: .env.example
-          strict: 'true'
-      - name: Deploy the validated file
-        run: ./scripts/deploy.sh .env.deploy
-      - name: Remove generated environment
-        if: always()
-        shell: python
-        run: |
-          from pathlib import Path
-          Path('.env.deploy').unlink(missing_ok=True)
+- name: Validate generated environment before deploy
+  uses: moisesaguiarjunior/env-contract-check@REVIEWED_COMMIT_SHA
+  with:
+    contract: env.contract.toml
+    env-file: .env.deploy
+    example-file: .env.example
+    strict: 'true'
 ```
+
+[Complete workflow triggered by a `v*` tag](examples/workflows/deploy-on-tag.yml): generation, validation, deployment, and cleanup. Replace the SHA and deploy command before use.
 
 `DEPLOY_ENV` is the complete dotenv content supplied by your deployment configuration/secret generator. You can replace the write step with your existing generation step. Missing or invalid settings fail validation; the following deployment step does not run. Do not add `continue-on-error` to the validation gate or regenerate the file between validation and deployment.
 
@@ -201,6 +179,8 @@ JSON reports go to stdout, including expected input errors. Diagnostics have sta
 | **env-contract-check** | A language-independent, explicit contract checked before startup, with value-free text/JSON diagnostics and example-key checks |
 | [python-dotenv](https://bbc2.github.io/python-dotenv/) | Loading dotenv configuration, including richer syntax and variable expansion |
 | [Pydantic Settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) | Typed application settings integrated into Python code |
+| [dotenv-safe](https://github.com/rolodato/dotenv-safe) | Loading dotenv in JavaScript and checking required names from `.env.example` against the resulting process environment |
+| [envalid](https://github.com/af/envalid) | Typed validation and an immutable settings object inside JavaScript/TypeScript applications |
 | [dotenv-linter](https://github.com/dotenv-linter/dotenv-linter) | Linting dotenv files for formatting and common mistakes |
 
 If application settings already give you the checks you need, keep using them. This tool is useful when you want an explicit preflight contract shared across applications or deployment scripts. Comparison reviewed on 2026-11-13; it is not an exhaustive feature audit.
@@ -226,9 +206,41 @@ Parsing raises `InputError` for expected input failures. Validation returns an i
 
 ## For AI coding agents
 
-Use [the agent integration guide](docs/agents.md) for executable examples, exit-code handling, and safe remediation. [llms.txt](llms.txt) is a compact documentation index; [AGENTS.md](AGENTS.md) contains contributor instructions. Neither file guarantees indexing or recommendations by search engines or AI systems.
+Use [the agent integration guide](docs/agents.md) for executable examples, exit-code handling, and safe remediation. [llms.txt](llms.txt) is a compact documentation index; [AGENTS.md](AGENTS.md) contains contributor instructions. The guide documents commands, machine-readable diagnostics, and remediation rules.
 
-Useful discovery terms: **dotenv validator**, **environment variable validation**, **environment configuration contract**, **`.env.example` drift detection**, **CI configuration preflight**, **Python CLI**.
+## Frequently asked questions
+
+### How do I validate a .env file in CI?
+
+Run the validator against your TOML schema. It exits nonzero when a required variable is missing or a value violates its type, bounds, or choices. Add JSON output for automation:
+
+```sh
+env-contract-check --contract env.contract.toml --env-file .env --format json
+```
+
+### How do I detect .env.example drift?
+
+Check the generated environment and compare example keys against the schema. Missing and stale example keys fail; placeholder values in the example are not type-checked.
+
+```sh
+env-contract-check --contract env.contract.toml --env-file .env --example-file .env.example
+```
+
+### How do I block a deploy when a variable is missing?
+
+Make validation the step immediately before deployment and deploy that same file. In a shell, use `&&`; in GitHub Actions, keep the default failure behavior and do not enable `continue-on-error` on the gate.
+
+```sh
+env-contract-check --contract env.contract.toml --env-file .env.deploy && ./scripts/deploy.sh .env.deploy
+```
+
+### Does it print my secrets?
+
+Expected CLI reports omit configuration values, raw source lines, and file paths, including validation and parsing errors. Variable names and line numbers remain visible; this does not redact other application or CI logs.
+
+```sh
+env-contract-check --contract env.contract.toml --env-file .env --format json
+```
 
 ## Development
 
@@ -242,7 +254,9 @@ uv build --no-sources
 uv run --locked twine check dist/*
 ```
 
-Tests cover source isolation, malformed files, duplicate variables, type boundaries, example drift, JSON output, and generated secret canaries. See [architecture](docs/architecture.md), [reuse map](docs/reuso.md), and [local validation evidence](docs/validation.md).
+Tests cover source isolation, malformed files, duplicate variables, type boundaries, example drift, JSON output, and generated secret canaries. See [architecture](docs/architecture.md), [reuse map](docs/reuse.md), and [local validation evidence](docs/validation.md).
+
+[Changelog](CHANGELOG.md) · [Review notes](docs/reviews/first-review-sol.md) · [Publication checklist](docs/publishing.md)
 
 ## License
 

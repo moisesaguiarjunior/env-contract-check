@@ -1,6 +1,6 @@
 # Contributing
 
-Start with the [contract](docs/contract.md), [architecture](docs/architecture.md), and [reuse map](docs/reuso.md). The current repository is a local candidate; no hosted contribution endpoint is assumed.
+Start with the [contract](docs/contract.md), [architecture](docs/architecture.md), and [reuse map](docs/reuse.md). The current repository is a local candidate; no hosted contribution endpoint is assumed.
 
 ## Development setup
 

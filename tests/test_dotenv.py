@@ -21,7 +21,7 @@ HASH= # comment
         "C": "literal $HOME \\n",
         "D": "https://example.com/#fragment",
         "EMPTY": "",
-        "HASH": "",
+        "HASH": "# comment",
     }
 
 
@@ -71,3 +71,17 @@ def test_shell_expressions_are_literal() -> None:
 @given(st.text(alphabet=st.characters(whitelist_categories=("L", "N")), max_size=150))
 def test_quoted_unicode_values_round_trip(value: str) -> None:
     assert parse_dotenv(f'VALUE="{value}"') == {"VALUE": value}
+
+
+@pytest.mark.parametrize(
+    ("assignment", "expected"),
+    [
+        ("TOKEN=#s3cr3t", "#s3cr3t"),
+        ("TOKEN= #after-space", "#after-space"),
+        ("TOKEN=a#b", "a#b"),
+        ("TOKEN=a #comment", "a"),
+        ('TOKEN="#literal #still-value"', "#literal #still-value"),
+    ],
+)
+def test_hash_values_are_not_silently_discarded(assignment: str, expected: str) -> None:
+    assert parse_dotenv(assignment) == {"TOKEN": expected}

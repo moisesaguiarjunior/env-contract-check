@@ -8,6 +8,8 @@ env-contract-check --contract PATH (--env-file PATH | --process-env)
 Also available as `python -m env_contract_check`. `--help` and `--version` exit with 0.
 Argument abbreviation is disabled. No implicit files are loaded. Paths resolve relative to the current directory. Inputs are read only; reports do not contain paths or source values.
 
+`--strict` is intended for curated files. With `--process-env`, it also rejects ordinary undeclared process variables such as `PATH` and `HOME`; omit it unless you intentionally validate the entire environment.
+
 ## Exit codes and streams
 
 | Code | Status | Meaning |

@@ -7,12 +7,12 @@ Verified on 2026-11-13 in the local development environment. These are author-ru
 | Check | Result |
 | --- | --- |
 | Ruff lint and formatting | Passed |
-| mypy strict mode | Passed; 14 Python files checked |
-| pytest on Python 3.11 | 130 passed |
-| pytest on Python 3.12 | 130 passed |
-| pytest on Python 3.13 | 130 passed |
-| pytest on Python 3.14 | 130 passed |
-| Coverage on Python 3.13, including branches | 99.25%; configured floor 90% |
+| mypy strict mode | Passed; 15 Python files checked |
+| pytest on Python 3.11 | 139 passed |
+| pytest on Python 3.12 | 139 passed |
+| pytest on Python 3.13 | 139 passed |
+| pytest on Python 3.14 | 139 passed |
+| Coverage on Python 3.13, including branches | 98.24%; configured floor 90% |
 | Composite Action adapter | 12 tests of the actual Bash step passed, including deploy blocking and literal input handling |
 | README Python example | Executed successfully in a subprocess |
 | Local documentation links | Passed |
@@ -22,7 +22,7 @@ Verified on 2026-11-13 in the local development environment. These are author-ru
 | Isolated wheel installation | Passed with no dependencies, outside the source directory; valid/invalid examples and module entry point checked |
 | Archive contents | Example template and typing marker present; no runtime dependencies or generated caches packaged |
 
-The coverage run does not instrument the subprocess module launcher. The launcher is exercised by integration and wheel-install checks. Coverage is not a correctness or security guarantee.
+The coverage run does not instrument the subprocess module launcher or its real closed-pipe regression. The launcher is exercised by integration and wheel-install checks. Coverage is not a correctness or security guarantee.
 
 ## Commands
 
@@ -48,6 +48,10 @@ Two deliberate mutations were applied only to temporary copies, with imports ver
 2. Replace the safe integer diagnostic with the supplied value: the generated-canary confidentiality test failed.
 
 Both failures were assertion failures, not import or syntax failures. Original source was never mutated by these experiments. Temporary copies and wheel smoke environments were removed. These experiments demonstrate two test protections, not a comprehensive mutation score.
+
+## Review corrections
+
+The first Sol review found buffered broken-pipe shutdown behavior; the separate Opus review identified the setup-uv annotated-tag pin and leading-hash value semantics. These were corrected locally with subprocess/parser regressions. The three remote Action pins were verified through GitHub Git commit endpoints using `tools/verify_action_pins.py`; offline regression evidence is in `action-pins.json`. Current code requires a new independent confirmation; the first report remains bound to its original commit.
 
 ## Limits and publication state
 

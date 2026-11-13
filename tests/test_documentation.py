@@ -66,3 +66,16 @@ def test_local_documentation_links_resolve() -> None:
                 continue
             path = target.partition("#")[0]
             assert (document.parent / path).exists(), f"{document.name}: broken link {target}"
+
+
+def test_action_pins_match_commit_objects_verified_in_public_metadata() -> None:
+    # Offline regression snapshot; updating it requires the separate online verifier.
+    evidence = json.loads((ROOT / "docs/action-pins.json").read_text(encoding="utf-8"))
+    files = [ROOT / "action.yml", *sorted((ROOT / ".github/workflows").glob("*.yml"))]
+    for path in files:
+        for reference in re.findall(r"uses:\s*([^\s#]+)", path.read_text(encoding="utf-8")):
+            if reference.startswith("./"):
+                continue
+            repository, sha = reference.split("@")
+            assert re.fullmatch(r"[0-9a-f]{40}", sha)
+            assert sha == evidence["commits"][repository]

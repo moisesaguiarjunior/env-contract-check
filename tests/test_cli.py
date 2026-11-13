@@ -56,7 +56,7 @@ def test_invalid_json_has_stable_fields_and_no_values(
                 "code": "value.integer",
                 "variable": "PORT",
                 "line": None,
-                "message": "Expected a decimal integer of at most 640 digits.",
+                "message": "Expected a decimal integer.",
             }
         ],
     }
@@ -186,17 +186,6 @@ def test_console_entrypoint_checks_packaged_examples() -> None:
     assert "4 declared variables" in result.stdout
 
 
-def test_broken_output_pipe_returns_an_error(
-    inputs: tuple[Path, Path],
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    def broken_print(*args: object, **kwargs: object) -> None:
-        raise BrokenPipeError
-
-    monkeypatch.setattr("builtins.print", broken_print)
-    assert main(arguments(inputs)) == 2
-
-
 def test_help_is_available(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as caught:
         main(["--help"])
@@ -216,3 +205,52 @@ def test_example_syntax_error_identifies_source_without_exposing_path(
     assert "In example file:" in output
     assert "line 2" in output
     assert "sensitive-canary" not in output
+
+
+@pytest.mark.parametrize("output_format", ["text", "json"])
+def test_closed_real_output_pipe_exits_cleanly(
+    inputs: tuple[Path, Path], output_format: str
+) -> None:
+    reader, writer = os.pipe()
+    os.close(reader)
+    try:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "env_contract_check",
+                *arguments(inputs),
+                "--format",
+                output_format,
+            ],
+            stdout=writer,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+    finally:
+        os.close(writer)
+    assert result.returncode == 2
+    assert result.stderr == ""
+
+
+@pytest.mark.parametrize("allow_empty", [True, False])
+def test_leading_hash_is_validated_as_a_value(
+    inputs: tuple[Path, Path],
+    capsys: pytest.CaptureFixture[str],
+    allow_empty: bool,
+) -> None:
+    inputs[0].write_text(
+        'version=1\n[variables.TOKEN]\ntype="string"\n'
+        f'allow_empty={str(allow_empty).lower()}\nchoices=["#synthetic"]',
+        encoding="utf-8",
+    )
+    inputs[1].write_text("TOKEN=#synthetic", encoding="utf-8")
+    assert main(arguments(inputs)) == 0
+    assert "#synthetic" not in capsys.readouterr().out
+    inputs[0].write_text(
+        'version=1\n[variables.TOKEN]\ntype="string"\nallow_empty=true\nchoices=[""]',
+        encoding="utf-8",
+    )
+    assert main(arguments(inputs)) == 1
+    assert "value.choice" in capsys.readouterr().out
