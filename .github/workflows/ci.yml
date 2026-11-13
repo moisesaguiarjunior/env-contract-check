@@ -1,0 +1,72 @@
+name: Checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Python ${{ matrix.python }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ['3.11', '3.12', '3.13', '3.14']
+        include:
+          - os: windows-latest
+            python: '3.13'
+          - os: macos-latest
+            python: '3.13'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: '0.11.29'
+      - run: uv sync --locked --python ${{ matrix.python }}
+      - run: uv run --locked ruff check .
+      - run: uv run --locked ruff format --check .
+      - run: uv run --locked mypy
+      - run: uv run --locked pytest --cov --cov-report=term-missing
+      - run: uv build --no-sources
+      - run: uv run --locked twine check dist/*
+      - run: uv run --locked python tools/smoke_wheel.py
+
+  action-smoke:
+    name: Composite action success and failure gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Accept a valid generated environment
+        uses: ./
+        with:
+          contract: examples/env.contract.toml
+          env-file: examples/valid.env
+          example-file: examples/.env.example
+          strict: 'true'
+      - name: Reject an invalid environment
+        id: invalid
+        # Only this negative test tolerates failure. A deployment gate must not.
+        continue-on-error: true
+        uses: ./
+        with:
+          contract: examples/env.contract.toml
+          env-file: examples/invalid.env
+      - name: Verify that the negative test actually failed
+        env:
+          OUTCOME: ${{ steps.invalid.outcome }}
+        run: test "$OUTCOME" = failure

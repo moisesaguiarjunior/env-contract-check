@@ -1,0 +1,20 @@
+# env-contract-check
+
+> Offline Python CLI for validating .env files and process environment variables against a versioned TOML contract. Reports missing, empty, invalid, and unexpected variables and .env.example drift without serializing values. Zero runtime dependencies; Python 3.11+.
+
+Local development candidate: install from this checkout, not an assumed PyPI release.
+
+## Documentation
+
+- [GitHub Action](docs/github-action.md): validate generated .env files before tag-triggered deployments.
+
+- [Overview and quick start](README.md): installation and runnable examples.
+- [Contract reference](docs/contract.md): types, fields, literal dotenv grammar.
+- [CLI protocol](docs/cli.md): flags, exit codes 0/1/2, stable diagnostic codes.
+- [Output JSON Schema](docs/output.schema.json): schema_version 1.
+- [Agent integration](docs/agents.md): execution and safe remediation.
+- [Security boundaries](SECURITY.md): reports omit values; names remain visible.
+- [Architecture](docs/architecture.md): pure validation and explicit adapters.
+- [Contributor instructions](AGENTS.md): local workflow and repository rules.
+
+This file is a navigation aid, not an indexing or recommendation guarantee.

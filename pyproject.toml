@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "env-contract-check"
+version = "0.1.0"
+description = "Validate .env files and environment variables against explicit contracts. Catch missing configuration and example drift with value-free CI reports."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Moises Aguiar Junior"}]
+keywords = ["dotenv", "environment-variables", "configuration-validation", "cli", "ci", "contract", "developer-tools", "github-actions", "deployment-validation"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Quality Assurance",
+  "Typing :: Typed",
+]
+
+[project.scripts]
+env-contract-check = "env_contract_check.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8,<10",
+    "pytest-cov>=6,<8",
+    "hypothesis>=6,<7",
+    "ruff>=0.11,<1",
+    "mypy>=1.15,<2",
+    "build>=1.2,<2",
+    "twine>=7,<8",
+    "jsonschema>=4,<5",
+    "types-jsonschema>=4.26.0.20261006",
+    "pyyaml>=6,<7",
+    "types-pyyaml>=6,<7",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests", "tools"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-config --strict-markers"
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = true
+source = ["env_contract_check"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 90
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/env_contract_check"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/tests", "/tools", "/examples", "/docs", "/README.md", "/LICENSE", "/pyproject.toml", "/uv.lock", "/CONTRIBUTING.md", "/SECURITY.md", "/AGENTS.md", "/llms.txt", "/action.yml"]

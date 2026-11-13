@@ -1,0 +1,58 @@
+name: Environment Contract Check
+description: Validate generated .env files before deployment using a typed contract and value-free diagnostics.
+author: Moises Aguiar Junior
+branding:
+  icon: check-circle
+  color: green
+inputs:
+  contract:
+    description: Path to the TOML contract, relative to the caller working directory.
+    required: false
+    default: env.contract.toml
+  env-file:
+    description: Path to the generated .env file to validate.
+    required: true
+  example-file:
+    description: Optional example file whose keys must exactly match the contract.
+    required: false
+    default: ''
+  strict:
+    description: Reject undeclared names in the generated environment file (true or false).
+    required: false
+    default: 'false'
+  format:
+    description: Report format (text or json).
+    required: false
+    default: text
+  python-version:
+    description: Python runtime for the isolated validator (3.11 or newer).
+    required: false
+    default: '3.13'
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+      with:
+        version: '0.11.29'
+    - name: Validate generated environment
+      shell: bash
+      env:
+        CHECK_ACTION_ROOT: ${{ github.action_path }}
+        CHECK_CONTRACT: ${{ inputs.contract }}
+        CHECK_ENV_FILE: ${{ inputs.env-file }}
+        CHECK_EXAMPLE: ${{ inputs.example-file }}
+        CHECK_STRICT: ${{ inputs.strict }}
+        CHECK_PYTHON: ${{ inputs.python-version }}
+        CHECK_FORMAT: ${{ inputs.format }}
+      run: |
+        args=("--contract=$CHECK_CONTRACT" "--env-file=$CHECK_ENV_FILE" "--format=$CHECK_FORMAT")
+        if [[ -n "$CHECK_EXAMPLE" ]]; then
+          args+=("--example-file=$CHECK_EXAMPLE")
+        fi
+        case "$CHECK_STRICT" in
+          true) args+=(--strict) ;;
+          false) ;;
+          *) printf '%s\n' 'ERROR: strict must be true or false.' >&2; exit 2 ;;
+        esac
+        uv run --isolated --project "$CHECK_ACTION_ROOT" --no-dev --locked \
+          --python "$CHECK_PYTHON" env-contract-check "${args[@]}"

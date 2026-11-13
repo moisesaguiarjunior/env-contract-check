@@ -1,0 +1,42 @@
+# Consumer template: replace REVIEWED_COMMIT_SHA and the deploy command before use.
+# This file is documentation; it is not an active workflow in this repository.
+name: Validate environment and deploy
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Write generated environment
+        shell: python
+        env:
+          DEPLOY_ENV_CONTENT: ${{ secrets.DEPLOY_ENV }}
+        run: |
+          import os
+          from pathlib import Path
+          Path('.env.deploy').write_text(os.environ['DEPLOY_ENV_CONTENT'], encoding='utf-8')
+      - name: Validate before deployment
+        uses: moisesaguiarjunior/env-contract-check@REVIEWED_COMMIT_SHA
+        with:
+          contract: env.contract.toml
+          env-file: .env.deploy
+          example-file: .env.example
+          strict: 'true'
+      - name: Deploy the validated file
+        run: ./scripts/deploy.sh .env.deploy
+      - name: Remove generated environment
+        if: always()
+        shell: python
+        run: |
+          from pathlib import Path
+          Path('.env.deploy').unlink(missing_ok=True)
