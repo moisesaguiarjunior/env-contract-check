@@ -1,6 +1,6 @@
-# Local validation — 0.1.0 candidate
+# Validation evidence — 0.1.0
 
-Verified on 2026-11-13 in the local development environment. These are author-run checks, not an independent review. The [source manifest](source-manifest.sha256) binds this record to the implementation, tests, examples, dependency lock, and workflow configuration; documentation is excluded to avoid circular hashes.
+The baseline results below were recorded on 2026-11-13 for implementation commit `0a00591` in the local development environment. These are author-run checks; independent reviews are linked separately. The [source manifest](source-manifest.sha256) tracks the current implementation, tests, examples, dependency lock, and workflow configuration; it is updated with source changes and does not extend historical test results to later commits.
 
 ## Results
 
@@ -53,10 +53,15 @@ Both failures were assertion failures, not import or syntax failures. Original s
 
 The first Sol review found buffered broken-pipe shutdown behavior; the separate Opus review identified the setup-uv annotated-tag pin and leading-hash value semantics. These were corrected locally with subprocess/parser regressions. The three remote Action pins were verified through GitHub Git commit endpoints using `tools/verify_action_pins.py`; offline regression evidence is in `action-pins.json`. Sol independently reconfirmed the corrections at commit `0a00591`; see the [follow-up review](reviews/followup-review-sol.md). The first report remains bound to its original commit.
 
-## Limits and publication state
+## First hosted validation
 
-- No remote, push, package publication, hosted CI run, deployment, or external review was performed.
-- The composite Action is implemented locally with a tag-deployment template and a prepared hosted smoke job. The GitHub Actions workflow is configured for Python 3.11–3.14 plus an OS matrix, with actions pinned by commit and read-only repository permissions. The hosted OS matrix has not executed; no local actionlint run was available.
-- Package/repository name availability and external discoverability have not been validated. Metadata, examples, `llms.txt`, and agent documentation help navigation but do not guarantee search ranking or AI recommendations.
+The [first Checks run](https://github.com/moisesaguiarjunior/env-contract-check/actions/runs/43520383690) on `7bd2935` passed the Linux Python 3.11–3.14 jobs, macOS Python 3.13, and the composite Action's acceptance/rejection checks. Windows exposed an additional closed-pipe variant: `OSError(EINVAL)` rather than `BrokenPipeError`. Commit `fc59647` handles that variant while preserving propagation of unrelated exceptions and retaining both real-pipe regressions unchanged.
+
+Author checks after that correction: 139 tests on Python 3.13, Ruff, formatting, mypy, build, Twine, and isolated installed-wheel checks passed. Combined local coverage was 97.27%; the new exception branch is exercised by subprocesses outside the main coverage instrumentation. Hosted results for each subsequent commit are recorded in the [Checks workflow](https://github.com/moisesaguiarjunior/env-contract-check/actions/workflows/ci.yml); use the exact commit's result when assessing a release.
+
+## Limits
+
+- The Action smoke job validates synthetic files and failure propagation; it does not deploy an application or certify a consumer's deployment configuration.
+- No local actionlint run or comprehensive dependency audit was performed.
 - URL checks are structural, dotenv grammar is deliberately limited, and reports still disclose variable names. See [security boundaries](../SECURITY.md).
-- Independent review and publication remain separate future steps.
+- PyPI distribution and a Marketplace listing are separate from the GitHub repository and release. See the [release process](publishing.md).
