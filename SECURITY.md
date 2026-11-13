@@ -10,4 +10,4 @@ The documented dotenv subset differs from loaders that support interpolation or 
 
 ## Reporting
 
-This local candidate has no public vulnerability-reporting endpoint. Share a minimal synthetic reproducer privately with the repository owner through an already-established channel. Do not include real `.env` files, tokens, private hostnames, or customer data. A private reporting channel must be configured before public release.
+Report vulnerabilities privately through [GitHub private vulnerability reporting](https://github.com/moisesaguiarjunior/env-contract-check/security/advisories/new). Include a minimal synthetic reproducer and affected version. Do not post security findings in public issues or include real `.env` files, tokens, private hostnames, or customer data.

@@ -25,6 +25,12 @@ classifiers = [
   "Typing :: Typed",
 ]
 
+[project.urls]
+Repository = "https://github.com/moisesaguiarjunior/env-contract-check"
+Documentation = "https://github.com/moisesaguiarjunior/env-contract-check#readme"
+Issues = "https://github.com/moisesaguiarjunior/env-contract-check/issues"
+Changelog = "https://github.com/moisesaguiarjunior/env-contract-check/blob/main/CHANGELOG.md"
+
 [project.scripts]
 env-contract-check = "env_contract_check.cli:main"
 

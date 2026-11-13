@@ -2,16 +2,16 @@
 
 > Offline Python CLI for validating .env files and process environment variables against a versioned TOML contract. Reports missing, empty, invalid, and unexpected variables and .env.example drift without serializing values. Zero runtime dependencies; Python 3.11+.
 
-Local development candidate: install from this checkout, not an assumed PyPI release.
+Install from the GitHub release or use the composite GitHub Action. The package is not published to PyPI.
 
 ## Documentation
 
-- [GitHub Action](docs/github-action.md): validate generated .env files before tag-triggered deployments.
-- [Overview and quick start](README.md): installation and runnable examples.
-- [Contract reference](docs/contract.md): types, fields, literal dotenv grammar.
-- [CLI protocol](docs/cli.md): flags, exit codes 0/1/2, stable diagnostic codes.
-- [Output JSON Schema](docs/output.schema.json): schema_version 1.
-- [Agent integration](docs/agents.md): execution and safe remediation.
-- [Security boundaries](SECURITY.md): reports omit values; names remain visible.
-- [Architecture](docs/architecture.md): pure validation and explicit adapters.
-- [Contributor instructions](AGENTS.md): local workflow and repository rules.
+- [GitHub Action](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/docs/github-action.md): validate generated .env files before tag-triggered deployments.
+- [Overview and quick start](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/README.md): installation and runnable examples.
+- [Contract reference](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/docs/contract.md): types, fields, literal dotenv grammar.
+- [CLI protocol](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/docs/cli.md): flags, exit codes 0/1/2, stable diagnostic codes.
+- [Output JSON Schema](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/docs/output.schema.json): schema_version 1.
+- [Agent integration](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/docs/agents.md): execution and safe remediation.
+- [Security boundaries](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/SECURITY.md): reports omit values; names remain visible.
+- [Architecture](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/docs/architecture.md): pure validation and explicit adapters.
+- [Contributor instructions](https://github.com/moisesaguiarjunior/env-contract-check/blob/main/AGENTS.md): local workflow and repository rules.

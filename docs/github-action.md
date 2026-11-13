@@ -10,7 +10,7 @@ push a release tag -> generate .env -> validate contract -> deploy that same fil
 
 ## Availability
 
-The Action is implemented locally and has not been published or run on GitHub-hosted runners. In a checkout of this repository, use `uses: ./`. After publishing, consumers can use `moisesaguiarjunior/env-contract-check@<reviewed-commit-sha>`. Replace the placeholder with a real reviewed commit; no release tag or Marketplace listing currently exists.
+The Action is distributed from [GitHub](https://github.com/moisesaguiarjunior/env-contract-check). Use `moisesaguiarjunior/env-contract-check@v0.1.0`, or pin the release commit SHA. In a checkout of this repository, use `uses: ./`.
 
 The Action installs uv using a pinned upstream action, then runs this checkout with the selected Python version (3.13 by default) in an isolated environment. It does not install into or sync the consumer's Python environment. First-run toolchain/build setup may access GitHub/PyPI; configuration validation itself performs no network requests. Linux runners are the initial workflow target. The exact Bash validation step is also tested locally; that does not emulate the full GitHub runner.
 
@@ -31,7 +31,7 @@ Validation exits 0, 1, or 2 with the [CLI protocol](cli.md). A nonzero result fa
 
 ## Tag-triggered deployment
 
-[Copyable consumer template](../examples/workflows/deploy-on-tag.yml): replace `REVIEWED_COMMIT_SHA`, supply the contract/example, configure `DEPLOY_ENV`, and replace `./scripts/deploy.sh` with your actual deploy command. Keep validation immediately before deployment and deploy the same file without regenerating it.
+[Copyable consumer template](../examples/workflows/deploy-on-tag.yml): pin the release commit, supply the contract/example, configure `DEPLOY_ENV`, and replace `./scripts/deploy.sh` with your actual deploy command. Keep validation immediately before deployment and deploy the same file without regenerating it.
 
 The template runs on pushed tags matching `v*`. It uses a `production` environment, writes the environment secret without shell interpolation, validates the file, deploys, and removes the file even on failure. Configure your own environment protections and deployment permissions as needed; the template grants only repository read access and does not define cloud authentication.
 

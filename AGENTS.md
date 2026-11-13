@@ -4,7 +4,7 @@ This repository is an English-language Python CLI and library. Keep implementati
 
 ## Scope and workflow
 
-- Current authorization is local implementation and verification only. Do not create remotes, push, publish packages, deploy, or send project data to third parties without an explicit request.
+- The founder authorized publishing this repository and its GitHub release on 2026-11-13, including version, CI, coverage, and license badges. Future publication must remain within explicit session authorization; do not publish packages to new registries or deploy unrelated services implicitly.
 - Read `docs/reuse.md` and search for equivalent code before adding a solution. Record what you reused and created. Keep the reuse map current.
 - Keep validation pure. Put process/environment/filesystem access in the CLI adapter. Prefer functions and immutable data over speculative interfaces or layers.
 - Treat the versioned contract and JSON report as public interfaces. Keep the reference, examples, schema, and behavior tests synchronized.

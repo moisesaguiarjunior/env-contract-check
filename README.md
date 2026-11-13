@@ -2,6 +2,11 @@
 
 # env-contract-check
 
+[![Version](https://img.shields.io/github/v/release/moisesaguiarjunior/env-contract-check)](https://github.com/moisesaguiarjunior/env-contract-check/releases/latest)
+[![CI](https://github.com/moisesaguiarjunior/env-contract-check/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/moisesaguiarjunior/env-contract-check/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/moisesaguiarjunior/env-contract-check/branch/main/graph/badge.svg)](https://codecov.io/gh/moisesaguiarjunior/env-contract-check)
+[![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
+
 ### Catch configuration mistakes before your application starts.
 
 **Validate `.env` files against a typed schema — your environment contract.**
@@ -33,7 +38,7 @@ INVALID: 3 issue(s).
   [value.integer] PORT: Expected a decimal integer.
 ```
 
-**Status:** local development candidate, version `0.1.0`. Not published to PyPI. Install or run this checkout using the local commands below.
+**Version 0.1.0.** Install from this repository or use the GitHub Action. The package is not published to PyPI.
 
 ## Why an environment contract?
 
@@ -54,7 +59,13 @@ Your application needs a numeric port, a URL, and a handful of required settings
 
 ## Quick start
 
-From this checkout, with [uv](https://docs.astral.sh/uv/):
+Install the released GitHub source with [uv](https://docs.astral.sh/uv/):
+
+```sh
+uv tool install git+https://github.com/moisesaguiarjunior/env-contract-check.git@v0.1.0
+```
+
+Or run the bundled example from a checkout, with [uv](https://docs.astral.sh/uv/):
 
 ```sh
 uv run --no-dev env-contract-check \
@@ -120,11 +131,11 @@ Tag v1.2.3 -> generate .env -> validate contract -> deploy
                              invalid: job fails
 ```
 
-The reusable composite Action is implemented in [action.yml](action.yml). It forwards inputs to the same CLI in an isolated Python environment. **It is still local:** the consumer template below becomes usable after publication. Replace `REVIEWED_COMMIT_SHA` with the reviewed public commit and replace the deploy command with your own script.
+The reusable composite Action is implemented in [action.yml](action.yml). It forwards inputs to the same CLI in an isolated Python environment. Use the release below, or pin its full commit SHA for an immutable dependency. Replace the deploy command with your own script.
 
 ```yaml
 - name: Validate generated environment before deploy
-  uses: moisesaguiarjunior/env-contract-check@REVIEWED_COMMIT_SHA
+  uses: moisesaguiarjunior/env-contract-check@v0.1.0
   with:
     contract: env.contract.toml
     env-file: .env.deploy
@@ -132,7 +143,7 @@ The reusable composite Action is implemented in [action.yml](action.yml). It for
     strict: 'true'
 ```
 
-[Complete workflow triggered by a `v*` tag](examples/workflows/deploy-on-tag.yml): generation, validation, deployment, and cleanup. Replace the SHA and deploy command before use.
+[Complete workflow triggered by a `v*` tag](examples/workflows/deploy-on-tag.yml): generation, validation, deployment, and cleanup. Pin the release commit and replace the deploy command before use.
 
 `DEPLOY_ENV` is the complete dotenv content supplied by your deployment configuration/secret generator. You can replace the write step with your existing generation step. Missing or invalid settings fail validation; the following deployment step does not run. Do not add `continue-on-error` to the validation gate or regenerate the file between validation and deployment.
 
@@ -241,6 +252,8 @@ Expected CLI reports omit configuration values, raw source lines, and file paths
 ```sh
 env-contract-check --contract env.contract.toml --env-file .env --format json
 ```
+
+The coverage badge reports the runtime package measured on Python 3.13, including branches. Subprocess launchers and closed-pipe paths are tested separately and are not included in that instrumentation. It is not an independent security assessment.
 
 ## Development
 

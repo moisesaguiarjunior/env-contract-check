@@ -41,7 +41,7 @@ Inputs `PORT=8080`, `PORT=eighty`, and an empty file produce exit codes 0, 1, an
 
 ## GitHub Actions
 
-Use the [composite Action](github-action.md) between environment generation and deployment. Read its local-only availability note before proposing a public `uses:` reference. A tag-triggered consumer template is in `examples/workflows/deploy-on-tag.yml`; it does not deploy anything from this checkout.
+Use the [composite Action](github-action.md) between environment generation and deployment. Use a released version or its full commit SHA. A tag-triggered consumer template is in `examples/workflows/deploy-on-tag.yml`; it does not deploy anything from this checkout.
 
 ## Navigation
 
@@ -52,4 +52,4 @@ Use the [composite Action](github-action.md) between environment generation and 
 - [Architecture](architecture.md): implementation boundaries.
 - [Reuse map](reuse.md): canonical code owners.
 
-Package and command: `env-contract-check`. Python import: `env_contract_check`. Development candidate only; no public package/repository availability is implied.
+Package and command: `env-contract-check`. Python import: `env_contract_check`. Available from the GitHub repository; not published to PyPI.

@@ -1,34 +1,23 @@
-# Publication checklist — not executed
+# Release process
 
-Publication remains outside the current authorization. This is prepared metadata, not a claim that public endpoints or releases exist.
+The project is distributed through its public GitHub repository, GitHub releases, and composite Action. It is not published to PyPI.
 
-## Local readiness
+## Before publishing a release
 
-- Reconcile the independent review findings against the corrected commit.
-- Run the documented checks, package-install smoke, and `uv run --locked python tools/verify_action_pins.py` (explicitly online, public metadata only). The offline pin regression uses `docs/action-pins.json`; it does not replace live object-type verification when pins change.
-- Confirm the founder's intended public Git author identity before exposing history. Do not rewrite the existing local history automatically.
-- Configure a real private vulnerability-reporting channel before replacing the local-only SECURITY.md instructions.
+- Reconcile independent review findings against the exact commit to publish.
+- Run the documented lint, type, test, build, metadata, and installed-wheel checks.
+- Run `uv run --locked python tools/verify_action_pins.py` when changing Action pins. This reads public GitHub metadata; the offline snapshot in `docs/action-pins.json` does not independently prove an object is a commit.
+- Inspect every commit being published for credentials, personal data, and machine identifiers. Preserve unrelated contributors' work.
+- Verify the private vulnerability reporting channel linked from SECURITY.md.
+- Check repository/package metadata, documentation links, changelog, and the version/tag agreement.
+- Wait for the exact commit's required CI jobs and inspect the independent coverage upload. Never substitute a static green badge for a failed or missing run.
 
-## Public metadata to activate after authorization
+## Release and metadata
 
-Suggested repository description:
+Create a version tag and GitHub release from the verified commit and attach the wheel/source archive built from that same commit. Keep the Action example pinned to a published release, and recommend full commit SHA pins for immutable consumer dependencies.
 
-> Validate .env files against a typed schema, detect .env.example drift, and block misconfigured deployments. Python CLI + GitHub Action.
+Repository topics describe dotenv, environment variables, schema validation, CI, Python, and deployment. Package URLs point to the actual repository, documentation, issues, and changelog. The four README badges link to the GitHub release, Checks workflow, Codecov report, and MIT license.
 
-Suggested topics: `dotenv`, `environment-variables`, `configuration-validation`, `schema-validation`, `github-actions`, `deployment`, `python`, `cli`, `devtools`.
+A Marketplace listing is separate from distributing an Action from its repository. PyPI is also a separate destination: only advertise `uvx env-contract-check` after the package exists there and its installation has been checked. No package registry credentials are included in this repository.
 
-Once the repository exists, add verified destinations to `pyproject.toml`:
-
-```toml
-[project.urls]
-Repository = "https://github.com/moisesaguiarjunior/env-contract-check"
-Documentation = "https://github.com/moisesaguiarjunior/env-contract-check#readme"
-Issues = "https://github.com/moisesaguiarjunior/env-contract-check/issues"
-Changelog = "https://github.com/moisesaguiarjunior/env-contract-check/blob/main/CHANGELOG.md"
-```
-
-These destinations are reserved proposals; they are intentionally not live package metadata yet. Python-version classifiers and SPDX `license = "MIT"` plus `license-files` are already present. Do not add deprecated `License ::` classifiers alongside modern SPDX licensing. Reference: [PyPA project metadata](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license-and-license-files), consulted 2026-11-13.
-
-After authorization, verify name availability and destination URLs, run hosted CI/Action tests, publish the reviewed package and `v0.1.0` release, then prepare the Marketplace listing. Replace the README SHA placeholder with the reviewed public commit, add real status/version badges, and switch installation examples to `uvx env-contract-check` only after the package actually exists on the index. Convert llms.txt links to the established canonical URLs at that point.
-
-The README terminology/FAQ changes are discoverability hypotheses, not measured ranking improvements. `llms.txt` is a navigation aid. No SchemaStore submission, pre-commit hook, release, remote repository, Marketplace listing, or scheduled automation was created.
+Python-version classifiers and SPDX `license = "MIT"` plus `license-files` are used. Do not add deprecated `License ::` classifiers alongside modern SPDX licensing. Reference: [PyPA project metadata](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license-and-license-files).
