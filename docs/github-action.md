@@ -41,6 +41,6 @@ Do not use `continue-on-error: true` on the validation gate or `if: always()` on
 
 Tests execute the actual Bash `run` block from `action.yml` with uv, a temporary consumer working directory, and synthetic inputs. They cover success, invalid/missing files, example drift, strict mode, paths containing spaces and shell expressions, invalid input values, and a simulated deployment step that must remain unexecuted after failure.
 
-The local test harness skips on Windows where Bash/uv integration has not been verified; the CLI itself still has Windows CI configuration. A dedicated hosted `action-smoke` job is prepared in the CI workflow but has not run.
+The local test harness skips on Windows where Bash/uv integration has not been verified; the CLI itself still has Windows CI configuration. A dedicated `action-smoke` job in the CI workflow checks the composite Action on a GitHub-hosted Linux runner. Consult the workflow result for the exact commit being used.
 
 References reviewed 2026-11-13: [GitHub composite actions](https://docs.github.com/en/actions/tutorials/create-actions/create-a-composite-action), [workflow syntax and failure behavior](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
