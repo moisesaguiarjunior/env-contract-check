@@ -256,7 +256,7 @@ uv run --locked twine check dist/*
 
 Tests cover source isolation, malformed files, duplicate variables, type boundaries, example drift, JSON output, and generated secret canaries. See [architecture](docs/architecture.md), [reuse map](docs/reuse.md), and [local validation evidence](docs/validation.md).
 
-[Changelog](CHANGELOG.md) · [Review notes](docs/reviews/first-review-sol.md) · [Publication checklist](docs/publishing.md)
+[Changelog](CHANGELOG.md) · [Review notes](docs/reviews/README.md) · [Publication checklist](docs/publishing.md)
 
 ## License
 

@@ -51,7 +51,7 @@ Both failures were assertion failures, not import or syntax failures. Original s
 
 ## Review corrections
 
-The first Sol review found buffered broken-pipe shutdown behavior; the separate Opus review identified the setup-uv annotated-tag pin and leading-hash value semantics. These were corrected locally with subprocess/parser regressions. The three remote Action pins were verified through GitHub Git commit endpoints using `tools/verify_action_pins.py`; offline regression evidence is in `action-pins.json`. Current code requires a new independent confirmation; the first report remains bound to its original commit.
+The first Sol review found buffered broken-pipe shutdown behavior; the separate Opus review identified the setup-uv annotated-tag pin and leading-hash value semantics. These were corrected locally with subprocess/parser regressions. The three remote Action pins were verified through GitHub Git commit endpoints using `tools/verify_action_pins.py`; offline regression evidence is in `action-pins.json`. Sol independently reconfirmed the corrections at commit `0a00591`; see the [follow-up review](reviews/followup-review-sol.md). The first report remains bound to its original commit.
 
 ## Limits and publication state
 
