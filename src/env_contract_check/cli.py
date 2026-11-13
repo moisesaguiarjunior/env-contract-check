@@ -1,6 +1,7 @@
 """CLI adapter: explicit sources, bounded reads, safe errors, stable output."""
 
 import argparse
+import errno
 import json
 import os
 import sys
@@ -120,7 +121,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = Report("error", 0, (error.issue,))
     try:
         print(render(report, json_output=_wants_json(args)), flush=True)
-    except BrokenPipeError:
+    except OSError as error:
+        # Windows reports a closed anonymous pipe as EINVAL rather than EPIPE.
+        if not isinstance(error, BrokenPipeError) and not (
+            sys.platform == "win32" and error.errno == errno.EINVAL
+        ):
+            raise
         # Prevent a second failed flush during interpreter shutdown.
         with open(os.devnull, "w", encoding="utf-8") as sink:
             os.dup2(sink.fileno(), sys.stdout.fileno())

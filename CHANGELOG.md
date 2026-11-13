@@ -15,3 +15,4 @@
 - Pin setup-uv to its verified commit object rather than the annotated tag object.
 - Preserve leading hash characters in unquoted values instead of silently treating them as empty.
 - Handle buffered closed stdout pipes with exit 2 and no shutdown traceback.
+- Handle the Windows EINVAL variant of a closed output pipe, confirmed by hosted CI.

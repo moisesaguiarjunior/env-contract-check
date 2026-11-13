@@ -18,3 +18,5 @@ One canonical owner per responsibility. Paths refer to existing implementations.
 Before adding a validator or parser, search these owners and their tests. Environment and example files use the same parser; example values intentionally skip type validation because their purpose is to document names.
 
 Initial search and alternative evaluation are recorded in [architecture](architecture.md). No previous project implementation was copied.
+
+For the first hosted Windows run, searched `src` and `tests` for `BrokenPipeError`, `OSError`, and output-pipe handling. Reused the CLI's shutdown-safe descriptor redirection and the existing real-pipe text/JSON regressions; extended only the exception recognition for Windows EINVAL. No parallel output handler was introduced.
